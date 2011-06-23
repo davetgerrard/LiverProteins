@@ -1,4 +1,13 @@
 
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
+
 #use this source if running manually.
 #source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")
 

@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 library(KEGG.db) # required for names.
 
 rm(xx,protKeggMap,keggProtPathMap,pathCounts,proteinCounts,pathList)

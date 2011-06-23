@@ -1,4 +1,13 @@
 
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
+
 setwd("C:/Users/dave/LiverProteins/testDir")
 
 #output <- TRUE

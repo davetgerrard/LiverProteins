@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 ## sharing of proteins between terms
 
 

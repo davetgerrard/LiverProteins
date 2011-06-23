@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 function (GOdata, termsP.value, firstSigNodes = 10, reverse = TRUE, 
     sigForAll = TRUE, wantedNodes = NULL, putWN = TRUE, putCL = 0, 
     type = NULL, showEdges = TRUE, swPlot = TRUE, useFullNames = TRUE, 

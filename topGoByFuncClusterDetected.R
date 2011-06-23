@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 ## funcClustering using only select GO terms shown by 10+ proteins
 
 

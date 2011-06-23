@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 ## this is clustering based on GO terms not proteins. 
 ## not what DAVID grouping suggests but might make sense
 

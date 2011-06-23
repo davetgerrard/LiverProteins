@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 source("C:/Users/dave/LiverProteins/loadGoMaps.R")
 
 prot_list <- unique(protGoMap$DB_Object_ID)

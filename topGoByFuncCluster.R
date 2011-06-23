@@ -1,4 +1,11 @@
 
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
 
 if(!exists('output')) { output <- FALSE }  # would be over-ridden if already specified
 

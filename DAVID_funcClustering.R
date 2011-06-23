@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 ##DAVID Clustering: A Heuristic Multiple Linkage Fuzzy Clustering Procedure
 
 makeNew <- FALSE	# set to TRUE if want to re-calc binary matrix (add 30 minutes to run time)

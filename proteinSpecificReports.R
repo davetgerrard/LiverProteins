@@ -1,3 +1,12 @@
+
+#########################################
+#					#
+#	Dave Gerrard 			#
+#	University of Manchester	#
+#	2011				#
+#					#
+#########################################
+
 #ubi.pca.5.scores[order(ubi.pca.5.scores$Comp.1),]
 #ubi.pca.5.scores[order(ubi.pca.5.scores$Comp.2),]
 #ubi.pca.5.scores[order(ubi.pca.5.scores$Comp.3),]
