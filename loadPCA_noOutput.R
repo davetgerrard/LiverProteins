@@ -208,31 +208,31 @@ mtext(paste(numbBaseSelective,"Non-ubiquitous proteins. Binary distance"),side=3
 dev.off()  # end of "liverProteinsSampleBasicHeatmaps.pdf"
 
 ##### heatmaps must be output separately. Can be joined in GIMP.
-thisFigure <- "dtg.1A"
-tiff(paste("fig",thisFigure,"tif",sep="."),compression="lzw",width=180, height=180,units="mm",res=300)
+thisFigure <- "3"   # ~ 15 samples
+tiff(paste("fig",thisFigure,"tif",sep="."),compression="lzw",width=180, height=120,units="mm",res=300)
 niceNames.fresh <- expDesignLiverProteins$niceName[match(colnames(as.matrix(proteinByLiverSample.ubiquitous[freshTissueIndex])),expDesignLiverProteins$sample)]
 expLabels.fresh <- expDesignLiverProteins$expRun[match(colnames(as.matrix(proteinByLiverSample.ubiquitous[freshTissueIndex])),expDesignLiverProteins$sample)]
 combLabels.fresh <-  paste(niceNames.fresh, expLabels.fresh,sep=" : ")
-test_heat  <- heatmap(as.matrix(proteinByLiverSample.ubiquitous[freshTissueIndex]),labRow="",labCol=combLabels.fresh,
-			col=heat.colors(256),margins=c(10,1))
+test_heat  <- heatmap(t(as.matrix(proteinByLiverSample.ubiquitous[freshTissueIndex])),labCol="",labRow=niceNames.fresh,
+			col=heat.colors(256),margins=c(1,8))
 mtext(thisFigure ,side=3,line=1,adj=0,cex=1.5)
 #mtext("1A: Ubiquitous proteins. Fresh adult, fetal and HepG2",side=3,line=1,cex=1.5)
 #plot(test_heat)
 dev.off()
 
-thisFigure <- "dtg.1B"
+thisFigure <- "5"	# ~ 24 samples
 tiff(paste("fig",thisFigure,"tif",sep="."),compression="lzw",width=180, height=180,units="mm",res=300)
 niceNames.ubiq <- expDesignLiverProteins$niceName[match(colnames(as.matrix(proteinByLiverSample.ubiquitous[allTissueIndex])),expDesignLiverProteins$sample)]
 expLabels.ubiq <- expDesignLiverProteins$expRun[match(colnames(as.matrix(proteinByLiverSample.ubiquitous[allTissueIndex])),expDesignLiverProteins$sample)]
 combLabels.ubiq <-  paste(niceNames.ubiq, expLabels.ubiq,sep=" : ")
-test_heat  <- heatmap(as.matrix(proteinByLiverSample.ubiquitous[allTissueIndex]),labRow="",labCol=combLabels.ubiq,
-			col=heat.colors(256),margins=c(10,1))
+test_heat  <- heatmap(t(as.matrix(proteinByLiverSample.ubiquitous[allTissueIndex])),labCol="",labRow=niceNames.ubiq,
+			col=heat.colors(256),margins=c(1,8))
 mtext(thisFigure ,side=3,line=1,adj=0,cex=1.5)
 #mtext("dtg.1B: Ubiquitous proteins. All samples",side=3,line=1,cex=1.5)
 #plot(test_heat)
 dev.off()
 
-thisFigure <- "dtg.S1"
+thisFigure <- "S1"		# some weirdness happens when I try and rotate this heatmap using t(). All goes red.
 tiff(paste("fig",thisFigure,"tif",sep="."),compression="lzw",width=180, height=180,units="mm",res=300)
 heatmap(as.matrix(baseProteinByLiverSample.selective[allTissueBaseIndex]),labRow="",labCol=combLabels ,distfun=function(c) dist(c,method="binary"),col=heat.colors(256),margins=c(10,1))
 mtext(thisFigure ,side=3,line=1,adj=0,cex=1.5)
@@ -277,6 +277,19 @@ loadings(ubiquitous.pca)
 # pc4 (6%) partially separates high-spot from the rest
 
 
+## set up some symbols and numbers for biplots
+sampleTypes <- c("Adult fresh", "Adult ALI-3D", "Adult Matrigel","Fetal fresh", "Fetal ALI-3D", "HepG2")
+samplePch <- c(15,0,12,16,1,10,17)	# squares for adult, circles for fetal. Solid, empty, crossed for fresh, ALI-3D, Matrigel. 
+
+expDesignLiverProteins$samplePch <- 0
+for(i in 1:length(sampleTypes)) {
+	thisSample <- sampleTypes[i]
+	expDesignLiverProteins$samplePch[grep(thisSample, expDesignLiverProteins$niceName)] <- samplePch[i]
+}
+
+pchNames.ubiq <- expDesignLiverProteins$samplePch[match(colnames(as.matrix(proteinByLiverSample.ubiquitous[allTissueIndex])),expDesignLiverProteins$sample)]
+
+
 if(output) {
 pdf(file="liverProteinsSampleUbiquitousPCA.pdf", width=10,height=10)
 plot(ubiquitous.pca, main="LiverProteinData\nVariance explained by Principal Components")			
@@ -315,16 +328,43 @@ dev.off()
 #biplot(ubiquitous.pca,choices=c(1,3), col=c("grey","black"),cex=c(0.5,1),xlabs=star.names, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2)	
 #biplot(ubiquitous.pca,choices=c(1,4), col=c("grey","black"),cex=c(0.5,1),xlabs=star.names, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2)
 
-tiff("fig.dtg.2.tiff",compression="lzw",width=180, height=180,units="mm",res=300)
+#tiff("fig.dtg.2.tiff",compression="lzw",width=180, height=180,units="mm",res=300)
+#op <- par(mfrow=c(2,2),mar=c(4,4,4,2))
+#star.names <- rep("*",nrow(proteinByLiverSample.ubiquitous))
+#plot(ubiquitous.pca, main="") ; mtext("A" ,side=3,line=2,adj=0,cex=1.5)			
+#biplot(ubiquitous.pca,choices=c(1,2), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("B" ,side=3,line=2,adj=0,cex=1.5)
+#biplot(ubiquitous.pca,choices=c(1,3), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("C" ,side=3,line=2,adj=0,cex=1.5)	
+#biplot(ubiquitous.pca,choices=c(1,4), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("D" ,side=3,line=2,adj=0,cex=1.5)
+#par(op)
+#dev.off()
+
+
+##hacked into biplot to find out how to generate co-ordinates for arrows and use pch points.
+#stats:::biplot.princomp
+#
+
+#ubiquitous.pca$loadings[,1:2]
+tiff("fig.6.tiff",compression="lzw",width=180, height=180,units="mm",res=600)
 op <- par(mfrow=c(2,2),mar=c(4,4,4,2))
 star.names <- rep("*",nrow(proteinByLiverSample.ubiquitous))
-plot(ubiquitous.pca, main="") ; mtext("A" ,side=3,line=2,adj=0,cex=1.5)			
-biplot(ubiquitous.pca,choices=c(1,2), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("B" ,side=3,line=2,adj=0,cex=1.5)
-biplot(ubiquitous.pca,choices=c(1,3), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("C" ,side=3,line=2,adj=0,cex=1.5)	
-biplot(ubiquitous.pca,choices=c(1,4), col=c("grey","black"),cex=c(0.5,0.6),xlabs=star.names, arrow.len=0, ylabs=niceNames.ubiq, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125)) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext("D" ,side=3,line=2,adj=0,cex=1.5)
+blankSampleNames <- rep("",length(niceNames.ubiq))
+# see stats:::print.summary.princomp for calculation of variance proportions.
+prop.vars <- ubiquitous.pca$sdev^2/sum(ubiquitous.pca$sdev^2)
+plot(ubiquitous.pca, main="") ; mtext("A" ,side=3,line=2,adj=0,cex=1.5)		
+legend("topright", legend=sampleTypes, pch=samplePch) 
+#thisChoice <- c(1,2)
+#thisChoice <- c(1,4)
+for(i in 2:4) {
+	thisChoice <- c(1,i)
+	xlabel <- paste(names(prop.vars)[thisChoice[1]]," (",round(prop.vars[thisChoice[1]]*100),"%)",sep="")
+	ylabel <- paste(names(prop.vars)[thisChoice[2]]," (",round(prop.vars[thisChoice[2]]*100),"%)",sep="")
+	biplot(ubiquitous.pca,choices=thisChoice, col=c("grey","black"),cex=c(0.5,0.6),xlab=xlabel, ylab=ylabel,xlabs=star.names, ylabs=blankSampleNames, xlim=c(-0.125,0.125), ylim=c(-0.125,0.125), var.axes=F) ;abline(v=0,lty=2) ; abline(h=0,lty=2) ; mtext(LETTERS[i] ,side=3,line=2,adj=0,cex=1.5)
+	tempLam <- ubiquitous.pca$sdev[thisChoice] * sqrt(ubiquitous.pca$n.obs)
+	points(t(t(ubiquitous.pca$loadings[,thisChoice]) * tempLam), pch=pchNames.ubiq, cex=1.5 )
+	#legend("topleft", legend=sampleTypes, pch=samplePch, cex=0.8) 
+}
 par(op)
 dev.off()
-
 
 }
 ## Make lists of genes correlated with each major principal component analysis.

@@ -9,7 +9,7 @@
 
 
 setwd("C:/Users/dave/LiverProteins/testDir")
-
+#output <- FALSE
 #output <- TRUE
 
 source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")

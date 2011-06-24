@@ -295,7 +295,7 @@ orderBy <- "elimFisher"
 goTerm <- summaryDetectResultsList$goTerm[1]
 
 validProts <- proteinByLiverSample.ubiquitous$spAccession
-goProteins <- na.omit(listProtsInGo(summaryDetectResultsList$goTerm[1],summaryDetectResultsList$ontology[1]))
+#goProteins <- na.omit(listProtsInGo(summaryDetectResultsList$goTerm[1],summaryDetectResultsList$ontology[1]))
 goProteins <- na.omit(listProtsInGo("GO:0006414","BP"))
 goProteins <- na.omit(listProtsInGo("GO:0005759","CC"))	# mito matrix
 goProteins <- na.omit(listProtsInGo("GO:0005743","CC")) 	# mito inner membrane
@@ -424,6 +424,7 @@ addGroupScoresToGroupTable <- function(groupTable,groupIds,groupName,scoreTable,
 
 #pc.i <- 1
 
+library(lattice)
 
 bwPlotsAsPdf <- function(orderBy.PC="elimWilcox", pcTableSigThreshold=1.0e-04, numbGraphResults =15)  {
 	pdfName <- paste("vioPlotsByPC",orderBy.PC,"Below",pcTableSigThreshold,"Max",numbGraphResults,"pdf",sep=".")
@@ -501,7 +502,11 @@ plotPCsFromSummary <- function(orderBy.PC="elimWilcox", pcTableSigThreshold=1.0e
 	bwTitle <- compHead
 	# complex index to reorder levels but not results of groupTable.
 	bymedian <- with(groupTable, reorder(group, rev(as.numeric(row.names(groupTable))), min))	
-	plot(bwplot(bymedian ~ score, groupTable, main=bwTitle,  aspect="xy",
+	bwTitle <- compHead
+	# complex index to reorder levels but not results of groupTable.
+	bymedian <- with(groupTable, reorder(group, rev(as.numeric(row.names(groupTable))), min))	
+	plot(bwplot(bymedian ~ score, groupTable, main=bwTitle,  aspect="xy", cex.main=2, cex.lab=2,
+		par.settings = list(layout.widths = list(axis.left = 0, ylab.axis.padding = 40)),
 	       panel = function(..., box.ratio) {
 		   panel.violin(..., col = "darkgrey",
 				varwidth = FALSE, box.ratio = box.ratio)
@@ -523,32 +528,10 @@ bwPlotsAsFigs(orderBy.PC="elimWilcox", pcTableSigThreshold=1.0e-04, numbGraphRes
 bwPlotsAsFigs(orderBy.PC="elimAbsWilcox", pcTableSigThreshold=1.0e-03, numbGraphResults =10)
 bwPlotsAsFigs(orderBy.PC="elimKS", pcTableSigThreshold=1.0e-05, numbGraphResults =10)
 
+
+
+
 stopifnot(FALSE)
 
 ######  old gubbins
-
-clusterRanks <- numeric(length=length(seedList))
-names(clusterRanks) <- 1:length(seedList)
-for(i in 1:length(sigTable$outputRank))  {
-	if(sigTable$cluster == NA) {next;}
-	clusters <- strplit(sigTable$cluster,",")
-	for(thisCluster in clusters)  {
-		if(clusterRanks[thisCluster] > 0) 
-	}
-}
-
-#The symbols \< and \> match the empty string at the beginning and end of a word
-
-
-
-	plot(bwplot(bymedian ~ score, groupTable,  main=bwTitle, aspect="iso",
-	       panel = function(..., box.ratio) {
-		   panel.violin(..., col = "darkgrey",
-				varwidth = FALSE, box.ratio = box.ratio)
-		   panel.bwplot(..., fill = "lightgrey", box.ratio = .1)
-	       } )
-	)
-
-
-
 
