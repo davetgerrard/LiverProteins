@@ -8,52 +8,25 @@
 #########################################
 
 
-setwd("C:/Users/dave/LiverProteins/testDir")
-#output <- FALSE
+setwd("C:/Users/dave/LiverProteins/testDir")  # change this to wherever you want the output to come out.
+
+#set this to TRUE if you want all the graphs to be output (mostly pdfs and tiffs)
+output <- FALSE
 #output <- TRUE
 
-source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")
 
-source("C:/Users/dave/LiverProteins/topGO_LiverProteins.R")
+# change these absolute paths. Relative paths could be used if they were relative to the working directory above.
+source("C:/Users/dave/LiverProteins/scripts/loadPCA_noOutput.R")
+
+source("C:/Users/dave/LiverProteins/scripts/topGO_LiverProteins.R")
 
 # this version of DAVID_funcClustering.R loads a pre-computed matrix
-source("C:/Users/dave/LiverProteins/DAVID_funcClustering.R")
+source("C:/Users/dave/LiverProteins/scripts/DAVID_funcClustering.R")
 
-source("C:/Users/dave/LiverProteins/topGoByFuncCluster.R")
-
-
+source("C:/Users/dave/LiverProteins/scripts/topGoByFuncCluster.R")
 
 
 
-###### NICER FORMAT
 
 
-# parameters
 
-runName <- paste(Sys.Date(),"_output",sep="")
-setwd("C:/Users/dave/LiverProteins/")
-workDir <- getwd()
-dataDir <- paste(workDir,"/data/",sep="")
-outputDir <- paste(workDir,runName,sep="/")
-fileOutput <- TRUE
-screenOutput <- TRUE
-
-# load the data
-
-
-# clean the data
-
-
-# select ubiquitous proteins
-
-
-# perform PCA
-
-
-# perform GO on all detected proteins
-
-
-# perform GO on PC scores
-
-
-# filter by functional groups
