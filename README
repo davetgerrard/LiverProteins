@@ -1,0 +1,71 @@
+##################################################
+#
+#	Dave Gerrard, University of Manchester
+#	2011
+#
+#
+##################################################
+
+# R scripts to analyse Cliff Rowe's Liver Protein dataset. 
+
+There is quite a bit of setting up of directories and R packages before running the scripts. It would be best to have the same version of R (or later?)
+
+A master script called cleanRun.R calls the other scripts. 
+
+
+## RUNNING THE SCRIPTS.
+
+
+LiverProteins dependencies and packages.
+#### SESSION INFO (these are the packages loaded by the end of the process.
+> sessionInfo()
+R version 2.11.1 (2010-05-31) 
+i386-pc-mingw32 
+
+locale:
+[1] LC_COLLATE=English_United Kingdom.1252  LC_CTYPE=English_United Kingdom.1252    LC_MONETARY=English_United Kingdom.1252
+[4] LC_NUMERIC=C                            LC_TIME=English_United Kingdom.1252    
+
+attached base packages:
+[1] grid      stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] org.Hs.eg.db_2.4.1   qvalue_1.24.0        gplots_2.8.0         caTools_1.10         bitops_1.0-4.1      
+ [6] gdata_2.8.0          gtools_2.6.2         lattice_0.18-8       topGO_1.16.2         SparseM_0.88        
+[11] GO.db_2.4.1          RSQLite_0.9-2        DBI_0.2-5            AnnotationDbi_1.10.2 Biobase_2.8.0       
+[16] graph_1.28.0        
+
+loaded via a namespace (and not attached):
+[1] tcltk_2.11.1 tools_2.11.1
+
+
+
+### LIBRARIES
+
+# might be best to install bioconductor 
+# source("http://bioconductor.org/biocLite.R")
+# biocLite()
+
+
+#install.packages(c("topGO", "lattice", "gplots", "qvalue", "org.Hs.eg.db")) # these may take some time. 
+
+# explicitly loaded packages. These are loaded from the scripts.And need to have been installed
+library(topGO)
+library(lattice)
+require(gplots)
+library(qvalue)
+library(org.Hs.eg.db) 
+# may be a bunch of dependencies to do with BioConductor and topGO. e.g. GO.db, AnnotationDbi
+
+### INPUT FILES
+source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")
+source("C:/Users/dave/LiverProteins/topGO_LiverProteins.R")
+source("C:/Users/dave/LiverProteins/DAVID_funcClustering.R")
+source("C:/Users/dave/LiverProteins/topGoByFuncCluster.R")
+
+baseProteinByLiverSample <- read.delim("C:/Users/dave/LiverProteins/data/Cliffs dataset.txt", header=T)
+prot2go <-  readMappings("C:/Users/dave/LiverProteins/data/go2prot.map")
+expDesignLiverProteins <- read.delim("C:/Users/dave/LiverProteins/data/CliffsExpDesign.txt", header=T)
+# this kappaMatrix can be recalculated as part of the script 
+kappaMatrix <- read.delim("C:/Users/dave/LiverProteins/data/ubiProtsKappaMatrixDetected.tab",sep="\t",header=T)
+
