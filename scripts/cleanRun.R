@@ -1,14 +1,18 @@
 
 #########################################
-#					#
-#	Dave Gerrard 			#
-#	University of Manchester	#
-#	2011				#
-#					#
+#					
+#	Dave Gerrard 			
+#	University of Manchester	
+#	2011				
+#					
 #########################################
 
 
-setwd("C:/Users/dave/LiverProteins/testDir")  # change this to wherever you want the output to come out.
+test_headDir <- "C:/Users/dave/LiverProteins/testDir"
+todayDir <- paste(test_headDir, Sys.Date(), sep="/")
+if(!file.exists(todayDir)) {dir.create(todayDir) }
+setwd(todayDir)  
+#setwd("C:/Users/dave/LiverProteins/testDir")  # change this to wherever you want the output to come out.
 
 #set this to TRUE if you want all the graphs to be output (mostly pdfs and tiffs)
 output <- FALSE

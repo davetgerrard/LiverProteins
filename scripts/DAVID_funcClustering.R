@@ -1,18 +1,18 @@
 
 #########################################
-#					#
-#	Dave Gerrard 			#
-#	University of Manchester	#
-#	2011				#
-#					#
+#					
+#	Dave Gerrard 			
+#	University of Manchester	
+#	2011				
+#					
 #########################################
 
-##DAVID Clustering: A Heuristic Multiple Linkage Fuzzy Clustering Procedure
+##################INFO:  DAVID Clustering: A Heuristic Multiple Linkage Fuzzy Clustering Procedure
 
 makeNew <- FALSE	# set to TRUE if want to re-calc binary matrix (add 30 minutes to run time)
 
-
-###temp: get list of protein/GO annotaitons
+########INFO: obtain pairwise annotation distances between proteins as kappa scores
+###INFO: temp: get list of protein/GO annotaitons
 
 protTerms <- prot2go[c(proteinByLiverSample.ubiquitous$spAccession)]
 
@@ -21,7 +21,7 @@ fullTermList <- unique(as.character(unlist(protTerms)))
 
 if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
 
-	### require binary grid of genes vs terms 
+	###INFO:  require binary grid of genes vs terms 
 
 	binaryGrid <- matrix(0,nrow=length(fullProtList),ncol=length(fullTermList),dimnames=list(fullProtList,fullTermList))
 
@@ -33,7 +33,7 @@ if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
 	}
 
 
-	### create kappa matrix for genes against genes based on co-occurrence of terms
+	#INFO:  create kappa matrix for genes against genes based on co-occurrence of terms
 	## can eliminate genes with <4 (minTermSize) terms. 
 
 	#number of terms per protein
@@ -52,7 +52,7 @@ if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
 	(as.numeric(davidKappaFromTable(contTable)))
 
 
-	#### THIS IS SLOW! About 30 mins. have saved the table
+	#INFO:  THIS IS SLOW! About 30 mins. have saved the table
 	kappaMatrix <-matrix(0,nrow=nrow(binaryGrid),ncol=nrow(binaryGrid),dimnames=list( row.names(binaryGrid), row.names(binaryGrid)))
 	for(i in 1:nrow(kappaMatrix))  {
 		for(j in 1:nrow(kappaMatrix)) {
@@ -64,13 +64,15 @@ if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
 
 	#write.table(kappaMatrix, file="ubiProtsKappaMatrix.tab",quote=F,sep="\t")
 } else {
-	# use pre-computed kappaMatrix
+	#INFO:  use pre-computed kappaMatrix
 	kappaMatrix <- read.delim("C:/Users/dave/LiverProteins/data/ubiProtsKappaMatrixDetected.tab",sep="\t",header=T)
 
 }
 
-### creates seed from each gene of clusters of genes with greater than 0.35 (start_kappa)
-### all relationships within cluster must be greater than start_kappa
+########INFO: Functional clustering
+#INFO: creates seed from each gene of clusters of genes with greater than start_kappa
+#INFO: 'propThreshold' relationships within cluster must be greater than start_kappa
+#INFO: Clusters must be at least 'minClusterSize'
 
 startKappa <- 0.65	# 0.65 is stronger threshold for kappaMatrix from deteceted protiens
 propThreshold <- 0.5
@@ -94,7 +96,7 @@ for(i in 1:nrow(kappaMatrix)) {
 
 #testList <- seedList
 
-### iteratively merge clusters sharing more than 50% (cluster_similarity) of members
+#INFO:  iteratively merge clusters sharing more 'propToMerge' (cluster_similarity) of members
 
 # start at one. if another cluster overlaps by 50%, merges these to a new list and remove from list. 
 # Should just one match proportion or both?    
@@ -103,7 +105,7 @@ for(i in 1:nrow(kappaMatrix)) {
 propToMerge <- 0.5
 
 
-## returns and index of the first pair of clusters to merge or 1 if no suitable pairs.
+## returns an index of the first pair of clusters to merge or 1 if no suitable pairs.
 getVectorToMerge <- function(seedList)  {
 	for(i in 2:length(seedList)) {
 		minLength <- min(length(seedList[[1]]),length(seedList[[i]]))	# use this for single group limit

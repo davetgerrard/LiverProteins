@@ -1,17 +1,17 @@
 
 #########################################
-#					#
-#	Dave Gerrard 			#
-#	University of Manchester	#
-#	2011				#
-#					#
+#					
+#	Dave Gerrard 			
+#	University of Manchester	
+#	2011				
+#					
 #########################################
 
 
 #use this source if running manually.
 #source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")
 
-
+##########INFO: Base GO analysis: Detected/Not-detected
 if(!exists('output')) { output <- FALSE }  # would be over-ridden if already specified
 
 library(topGO)
@@ -63,64 +63,70 @@ resultSummaryAsText <-function (x)    # Function to collect data from GOdata res
 
 summaryDetectResultsList <- data.frame()
 
+#INFO:Base GO analysis -> "liverProteinsUbiqBasicGo.pdf"
+
 pdf(file="liverProteinsUbiqBasicGo.pdf", width=10,height=9)
 for(thisGOgraph in goGraphs )  {
-allProtList <- names(prot2go)
-detectedProts <- ubi.pca.5.scores$spAccession
-geneList <- factor(as.integer(allProtList %in% detectedProts))
-names(geneList) <- allProtList 
-#head(geneList)
-GOdataBase <- new("topGOdata",
-  		description =  "Liver proteins data set",
-              ontology = thisGOgraph,
-              allGenes = geneList,
-  			nodeSize = nodeSizeValue,
-              annot = annFUN.GO2genes,
-		GO2genes=go2prot 
-               )
-test.stat <- new("classicCount", testStatistic = GOFisherTest, name="Fisher test")
-resultFisher <- getSigGroups(GOdataBase,test.stat)
-test.stat <- new("elimCount", testStatistic = GOFisherTest, name="elimFisher", cutOff = elimCutOff)
-resultElimFisher <- getSigGroups(GOdataBase,test.stat)
-resultElimFisherAdj <- resultElimFisher
-score(resultElimFisherAdj) <- qvalue(score(resultElimFisher))$qvalue
-allResFT <- GenTable(GOdataBase, classic=resultFisher,elim=resultElimFisher,qvalElim=resultElimFisherAdj,
-				orderBy="qvalElim",topNodes=topTerms )
-#allResFT <- subset(allResFT, select=-"Rank in elim")
-#allResFT
-headText <- resultSummaryAsText(resultElimFisher)
-headText <- paste(headText, "\nTop ",topTerms,"GO terms shown")
-par(mar=c(1,1,1,1))
-layout(matrix(c(1,2), byrow=T),heights=c(1,3)) 
-textplot(headText,halign="left",mar=c(0,0,0,0))
-textplot(allResFT,mar=c(0,0,0,0))
+	allProtList <- names(prot2go)
+	detectedProts <- ubi.pca.5.scores$spAccession
+	geneList <- factor(as.integer(allProtList %in% detectedProts))
+	names(geneList) <- allProtList 
+	#head(geneList)
+	GOdataBase <- new("topGOdata",
+			description =  "Liver proteins data set",
+			ontology = thisGOgraph,
+			allGenes = geneList,
+			nodeSize = nodeSizeValue,
+			annot = annFUN.GO2genes,
+			GO2genes=go2prot 
+		       )
+	test.stat <- new("classicCount", testStatistic = GOFisherTest, name="Fisher test")
+	resultFisher <- getSigGroups(GOdataBase,test.stat)
+	test.stat <- new("elimCount", testStatistic = GOFisherTest, name="elimFisher", cutOff = elimCutOff)
+	resultElimFisher <- getSigGroups(GOdataBase,test.stat)
+	resultElimFisherAdj <- resultElimFisher
+	score(resultElimFisherAdj) <- qvalue(score(resultElimFisher))$qvalue
+	allResFT <- GenTable(GOdataBase, classic=resultFisher,elim=resultElimFisher,qvalElim=resultElimFisherAdj,
+					orderBy="qvalElim",topNodes=topTerms )
+	#allResFT <- subset(allResFT, select=-"Rank in elim")
+	#allResFT
+	headText <- resultSummaryAsText(resultElimFisher)
+	headText <- paste(headText, "\nTop ",topTerms,"GO terms shown")
+	par(mar=c(1,1,1,1))
+	layout(matrix(c(1,2), byrow=T),heights=c(1,3)) 
+	textplot(headText,halign="left",mar=c(0,0,0,0))
+	textplot(allResFT,mar=c(0,0,0,0))
 
-###  getMethods("GenTable")
+	###  getMethods("GenTable")
 
-### create summmary table manually and add to single table for all results across ontologies
+	### create summmary table manually and add to single table for all results across ontologies
 
-manual.Fisher <- data.frame(Fisher=score(resultFisher),goTerm=names(score(resultFisher)))
-manual.elimFisher <- data.frame(elimFisher=score(resultElimFisher),goTerm=names(score(resultElimFisher)))
-manual.termStats <- termStat(GOdataBase,names(score(resultFisher)))
-manual.termStats$goTerm <- row.names(manual.termStats)
+	manual.Fisher <- data.frame(Fisher=score(resultFisher),goTerm=names(score(resultFisher)))
+	manual.elimFisher <- data.frame(elimFisher=score(resultElimFisher),goTerm=names(score(resultElimFisher)))
+	manual.termStats <- termStat(GOdataBase,names(score(resultFisher)))
+	manual.termStats$goTerm <- row.names(manual.termStats)
 
-thisGoResults <- NULL
-thisGoResults <- merge(manual.termStats,manual.Fisher,by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.elimFisher ,by="goTerm")
+	thisGoResults <- NULL
+	thisGoResults <- merge(manual.termStats,manual.Fisher,by="goTerm")
+	thisGoResults <- merge(thisGoResults ,manual.elimFisher ,by="goTerm")
 
-thisGoResults$ontology <- thisGOgraph
-thisGoResults$description <-  as.character(topGO:::.getTermsDefinition(as.character(thisGoResults$goTerm), ontology(GOdataBase),numChar=200))
-goGroup <- as.character(thisGoResults$goTerm)
-#thisGoResults$number <- unlist(lapply(goGroup, FUN=function(x) length(genesInTerm(GOdataBase,x)[[1]])))
+	thisGoResults$ontology <- thisGOgraph
+	thisGoResults$description <-  as.character(topGO:::.getTermsDefinition(as.character(thisGoResults$goTerm), ontology(GOdataBase),numChar=200))
+	goGroup <- as.character(thisGoResults$goTerm)
+	#thisGoResults$number <- unlist(lapply(goGroup, FUN=function(x) length(genesInTerm(GOdataBase,x)[[1]])))
 
-summaryDetectResultsList <- rbind(summaryDetectResultsList,thisGoResults)
+	summaryDetectResultsList <- rbind(summaryDetectResultsList,thisGoResults)
 
 }
 dev.off()
 ######## END OF BASE GO ANALYSIS
 
+
+#INFO: output base GO results -> testDetectGOSummary.tab"
 write.table(summaryDetectResultsList[order(summaryDetectResultsList$elimFisher),],file="testDetectGOSummary.tab",quote=F,row.names=F,sep="\t")
 
+
+#########INFO: Plain GO analysis on PC scores [old]
 
 GOWilcoxTestGreater <- function (object,alternativeType="greater") 
 {
@@ -165,109 +171,113 @@ for (i in 1:5)  {
 
 ## faster to specify the GOdata object once for each ontology and update scores from each PC.
 pdf(file="liverProteinsUbiqPCA_GO_byWilcox.pdf", width=11,height=9)
+
 for(thisGOgraph in goGraphs )  {
 
-#topGoToProt <- annFUN.GO2genes("BP", feasibleGenes = NULL, go2prot)
-#topGoProtToGo.BP <- annFUN.gene2GO("BP", feasibleGenes = NULL, prot2go )
+	#topGoToProt <- annFUN.GO2genes("BP", feasibleGenes = NULL, go2prot)
+	#topGoProtToGo.BP <- annFUN.gene2GO("BP", feasibleGenes = NULL, prot2go )
 
-geneList <- ubi.pca.5.scores$Comp.1
-names(geneList) <- ubi.pca.5.scores$spAccession
+	geneList <- ubi.pca.5.scores$Comp.1
+	names(geneList) <- ubi.pca.5.scores$spAccession
 
-topDiffGenes <- function(allScore) {
-  return(allScore )
-}
+	topDiffGenes <- function(allScore) {
+	  return(allScore )
+	}
 
-GOdata <- new("topGOdata",
-		  description =  "Liver proteins data set",
-              ontology = thisGOgraph ,
-              allGenes = geneList,
-		  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-		GO2genes=go2prot 
-		               )
-for (i in 1:5)  {
+	GOdata <- new("topGOdata",
+			  description =  "Liver proteins data set",
+		      ontology = thisGOgraph ,
+		      allGenes = geneList,
+			  geneSelectionFun = topDiffGenes,
+		      nodeSize = nodeSizeValue ,
+		      annot = annFUN.GO2genes,
+			GO2genes=go2prot 
+				       )
+	for (i in 1:5)  {
 
-compHead <- paste("Comp.",i,sep="")
-geneList <- ubi.pca.5.scores[,compHead]
-names(geneList) <- ubi.pca.5.scores$spAccession
-GOdata <- updateGenes(GOdata,geneList,topDiffGenes)
+		compHead <- paste("Comp.",i,sep="")
+		geneList <- ubi.pca.5.scores[,compHead]
+		names(geneList) <- ubi.pca.5.scores$spAccession
+		GOdata <- updateGenes(GOdata,geneList,topDiffGenes)
 
-test.stat <- new("classicScore", testStatistic = GOWilcoxTest2Sided, name = "Wilcox tests") 
-resultWilcox <- getSigGroups(GOdata, test.stat)
+		test.stat <- new("classicScore", testStatistic = GOWilcoxTest2Sided, name = "Wilcox tests") 
+		resultWilcox <- getSigGroups(GOdata, test.stat)
 
-test.stat <- new("elimScore", testStatistic = GOWilcoxTest2Sided, name = "Wilcox test", cutOff = elimCutOff)    #,alternative="less"
-resultElimWilcox <- getSigGroups(GOdata, test.stat)
+		test.stat <- new("elimScore", testStatistic = GOWilcoxTest2Sided, name = "Wilcox test", cutOff = elimCutOff)    #,alternative="less"
+		resultElimWilcox <- getSigGroups(GOdata, test.stat)
 
-#resultElimWilcoxAdj <- resultElimWilcox 
-#score(resultElimWilcoxAdj) <- qvalue(score(resultElimWilcox))$qvalue
+		#resultElimWilcoxAdj <- resultElimWilcox 
+		#score(resultElimWilcoxAdj) <- qvalue(score(resultElimWilcox))$qvalue
 
-test.stat <- new("classicScore", testStatistic = GOKSTest, name = "KS tests")     # ,alternative="less"  
-resultKS <- getSigGroups(GOdata, test.stat)
+		test.stat <- new("classicScore", testStatistic = GOKSTest, name = "KS tests")     # ,alternative="less"  
+		resultKS <- getSigGroups(GOdata, test.stat)
 
-test.stat <- new("elimScore", testStatistic = GOKSTest, name = "KS test", cutOff = elimCutOff)    #,alternative="less"
-resultElimKS <- getSigGroups(GOdata, test.stat)
+		test.stat <- new("elimScore", testStatistic = GOKSTest, name = "KS test", cutOff = elimCutOff)    #,alternative="less"
+		resultElimKS <- getSigGroups(GOdata, test.stat)
 
-#resultElimKSAdj <- resultElimKS
-#score(resultElimKSAdj ) <- qvalue(score(resultElimKS))$qvalue
+		#resultElimKSAdj <- resultElimKS
+		#score(resultElimKSAdj ) <- qvalue(score(resultElimKS))$qvalue
 
-# change scores to absolute values for Greater than test
-geneList <- abs(ubi.pca.5.scores[,compHead])
-names(geneList) <- ubi.pca.5.scores$spAccession
-GOdata <- updateGenes(GOdata,geneList,topDiffGenes)
-test.stat <- new("classicScore", testStatistic = GOWilcoxTestGreater, name = "Wilcox tests") 
-resultWilcoxAbs <- getSigGroups(GOdata, test.stat)
+		# change scores to absolute values for Greater than test
+		geneList <- abs(ubi.pca.5.scores[,compHead])
+		names(geneList) <- ubi.pca.5.scores$spAccession
+		GOdata <- updateGenes(GOdata,geneList,topDiffGenes)
+		test.stat <- new("classicScore", testStatistic = GOWilcoxTestGreater, name = "Wilcox tests") 
+		resultWilcoxAbs <- getSigGroups(GOdata, test.stat)
 
-test.stat <- new("elimScore", testStatistic = GOWilcoxTestGreater, name = "Wilcox test", cutOff = elimCutOff)    #,alternative="less"
-resultElimWilcoxAbs <- getSigGroups(GOdata, test.stat)
+		test.stat <- new("elimScore", testStatistic = GOWilcoxTestGreater, name = "Wilcox test", cutOff = elimCutOff)    #,alternative="less"
+		resultElimWilcoxAbs <- getSigGroups(GOdata, test.stat)
 
-#resultElimWilcoxAbsAdj <- resultElimWilcoxAbs 
-#score(resultElimWilcoxAbsAdj ) <- qvalue(score(resultElimWilcoxAbs ))$qvalue
+		#resultElimWilcoxAbsAdj <- resultElimWilcoxAbs 
+		#score(resultElimWilcoxAbsAdj ) <- qvalue(score(resultElimWilcoxAbs ))$qvalue
 
 
-allResKS <- GenTable(GOdata, Wilcox = resultWilcox,  elimWilcox = resultElimWilcox ,
-					absWilcox = resultWilcoxAbs, elimAbsWilcox=resultElimWilcoxAbs ,
-					KS = resultKS , elimKS=resultElimKS, 
-					 orderBy = "elimAbsWilcox", 
-					topNodes=topTerms)
-allResKS <- subset(allResKS, select=-c(Annotated,Significant,Expected))
-headText <- paste("Principal Component: ",i,"\n",resultSummaryAsText(resultElimWilcox))
-headText <- paste(headText, "\nTop ",topTerms,"GO terms shown")
-par(mar=c(0,0,0,0))
-layout(matrix(c(1,2), byrow=T),heights=c(1,3)) 
-textplot(headText,halign="left",mar=c(0,0,0,0))
-textplot(allResKS ,mar=c(0,0,0,0))
+		allResKS <- GenTable(GOdata, Wilcox = resultWilcox,  elimWilcox = resultElimWilcox ,
+							absWilcox = resultWilcoxAbs, elimAbsWilcox=resultElimWilcoxAbs ,
+							KS = resultKS , elimKS=resultElimKS, 
+							 orderBy = "elimAbsWilcox", 
+							topNodes=topTerms)
+		allResKS <- subset(allResKS, select=-c(Annotated,Significant,Expected))
+		headText <- paste("Principal Component: ",i,"\n",resultSummaryAsText(resultElimWilcox))
+		headText <- paste(headText, "\nTop ",topTerms,"GO terms shown")
+		par(mar=c(0,0,0,0))
+		layout(matrix(c(1,2), byrow=T),heights=c(1,3)) 
+		textplot(headText,halign="left",mar=c(0,0,0,0))
+		textplot(allResKS ,mar=c(0,0,0,0))
 
-### create summmary table manually and add to single table for all results across ontologies
+		### create summmary table manually and add to single table for all results across ontologies
 
-manual.Wilcox <- data.frame(Wilcox=score(resultWilcox),goTerm=names(score(resultWilcox)))
-manual.elimWilcox <- data.frame(elimWilcox=score(resultElimWilcox),goTerm=names(score(resultElimWilcox)))
-manual.absWilcox <- data.frame(absWilcox =score(resultWilcoxAbs),goTerm=names(score(resultWilcoxAbs)))
-manual.elimAbsWilcox <- data.frame(elimAbsWilcox=score(resultElimWilcoxAbs),goTerm=names(score(resultElimWilcoxAbs)))
-manual.KS <- data.frame(KS=score(resultKS),goTerm=names(score(resultKS)))
-manual.elimKS <- data.frame(elimKS=score(resultElimKS),goTerm=names(score(resultElimKS)))
-manual.termStats <- termStat(GOdata,names(score(resultWilcox)))
-manual.termStats <- subset(manual.termStats, select=-c(Significant,Expected))
-manual.termStats$goTerm <- row.names(manual.termStats)
+		manual.Wilcox <- data.frame(Wilcox=score(resultWilcox),goTerm=names(score(resultWilcox)))
+		manual.elimWilcox <- data.frame(elimWilcox=score(resultElimWilcox),goTerm=names(score(resultElimWilcox)))
+		manual.absWilcox <- data.frame(absWilcox =score(resultWilcoxAbs),goTerm=names(score(resultWilcoxAbs)))
+		manual.elimAbsWilcox <- data.frame(elimAbsWilcox=score(resultElimWilcoxAbs),goTerm=names(score(resultElimWilcoxAbs)))
+		manual.KS <- data.frame(KS=score(resultKS),goTerm=names(score(resultKS)))
+		manual.elimKS <- data.frame(elimKS=score(resultElimKS),goTerm=names(score(resultElimKS)))
+		manual.termStats <- termStat(GOdata,names(score(resultWilcox)))
+		manual.termStats <- subset(manual.termStats, select=-c(Significant,Expected))
+		manual.termStats$goTerm <- row.names(manual.termStats)
 
-thisGoResults <- NULL
-thisGoResults <- merge(manual.termStats, manual.Wilcox, by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.elimWilcox, by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.absWilcox, by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.elimAbsWilcox, by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.KS, by="goTerm")
-thisGoResults <- merge(thisGoResults ,manual.elimKS, by="goTerm")
+		thisGoResults <- NULL
+		thisGoResults <- merge(manual.termStats, manual.Wilcox, by="goTerm")
+		thisGoResults <- merge(thisGoResults ,manual.elimWilcox, by="goTerm")
+		thisGoResults <- merge(thisGoResults ,manual.absWilcox, by="goTerm")
+		thisGoResults <- merge(thisGoResults ,manual.elimAbsWilcox, by="goTerm")
+		thisGoResults <- merge(thisGoResults ,manual.KS, by="goTerm")
+		thisGoResults <- merge(thisGoResults ,manual.elimKS, by="goTerm")
 
-thisGoResults$ontology <- thisGOgraph
-thisGoResults$description <-  as.character(topGO:::.getTermsDefinition(as.character(thisGoResults$goTerm), ontology(GOdata),numChar=200))
-goGroup <- as.character(thisGoResults$goTerm)
-#thisGoResults$number <- unlist(lapply(goGroup, FUN=function(x) length(genesInTerm(GOdata,x)[[1]])))
+		thisGoResults$ontology <- thisGOgraph
+		thisGoResults$description <-  as.character(topGO:::.getTermsDefinition(as.character(thisGoResults$goTerm), ontology(GOdata),numChar=200))
+		goGroup <- as.character(thisGoResults$goTerm)
+		#thisGoResults$number <- unlist(lapply(goGroup, FUN=function(x) length(genesInTerm(GOdata,x)[[1]])))
 
-summmaryPcResultList[[i]] <- rbind(summmaryPcResultList[[i]],thisGoResults)
+		summmaryPcResultList[[i]] <- rbind(summmaryPcResultList[[i]],thisGoResults)
 
-}	#end of PC
+
+	}	#end of PC
 }	#end of GO tree
 dev.off()
+
+#INFO: plain GO analysis tables output -> "GoSummaryByPC.[n].tab"
 
 for(i in 1:length(summmaryPcResultList)) {
 	fileName <- paste("GoSummaryByPc",i,"tab",sep=".")
@@ -298,43 +308,43 @@ go.genes <- genesInTerm(GOdata,goID)[[1]]
 
 thisGOgraph <- "CC"
 GOdata <- new("topGOdata",
-  description =  "Liver proteins data set",
-              ontology = thisGOgraph ,
-              allGenes = geneList,
-  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-GO2genes=go2prot 
+		description =  "Liver proteins data set",
+		ontology = thisGOgraph ,
+		allGenes = geneList,
+		geneSelectionFun = topDiffGenes,
+		nodeSize = nodeSizeValue ,
+		annot = annFUN.GO2genes,
+		GO2genes=go2prot 
                )
 ### three separate GOdata structures for quickly pulling down genes with a GO term
 GOdata.BP <- new("topGOdata",
-  description =  "Liver proteins data set",
-              ontology = "BP" ,
-              allGenes = geneList,
-  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-GO2genes=go2prot 
+		description =  "Liver proteins data set",
+		ontology = "BP" ,
+		allGenes = geneList,
+		geneSelectionFun = topDiffGenes,
+		nodeSize = nodeSizeValue ,
+		annot = annFUN.GO2genes,
+		GO2genes=go2prot 
                )
 
 GOdata.MF <- new("topGOdata",
-  description =  "Liver proteins data set",
-              ontology = "MF" ,
-              allGenes = geneList,
-  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-GO2genes=go2prot 
+		description =  "Liver proteins data set",
+		ontology = "MF" ,
+		allGenes = geneList,
+		geneSelectionFun = topDiffGenes,
+		nodeSize = nodeSizeValue ,
+		annot = annFUN.GO2genes,
+		GO2genes=go2prot 
                )
 
 GOdata.CC <- new("topGOdata",
-  description =  "Liver proteins data set",
-              ontology = "CC" ,
-              allGenes = geneList,
-  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-GO2genes=go2prot 
+		description =  "Liver proteins data set",
+		ontology = "CC" ,
+		allGenes = geneList,
+		geneSelectionFun = topDiffGenes,
+		nodeSize = nodeSizeValue ,
+		annot = annFUN.GO2genes,
+		GO2genes=go2prot 
                )
 
 goID <- "GO:0019083"	# viral transcription
@@ -408,26 +418,19 @@ goID <- "GO:0031018"
 go.genes <- genesInTerm(GOdata.BP,goID)[[1]]
 thisGOgraph <- "BP"
 GOdata <- new("topGOdata",
-  description =  "Liver proteins data set",
-              ontology = thisGOgraph ,
-              allGenes = geneList,
-  geneSelectionFun = topDiffGenes,
-              nodeSize = nodeSizeValue ,
-              annot = annFUN.GO2genes,
-GO2genes=go2prot 
+		description =  "Liver proteins data set",
+		ontology = thisGOgraph ,
+		allGenes = geneList,
+		geneSelectionFun = topDiffGenes,
+		nodeSize = nodeSizeValue ,
+		annot = annFUN.GO2genes,
+		GO2genes=go2prot 
                )
 go.genes <- genesInTerm(GOdata,goID)[[1]]
 go.genes
 go.genes.index <- match(go.genes , proteinByLiverSample.ubiquitous$spAccession)
 proteinByLiverSample.ubiquitous[go.genes.index,]
 proteinByLiverSample.ubiquitous[go.genes.index,c("Accession", "Name")]
-
-
-
-
-
-
-
 
 
 
@@ -440,10 +443,6 @@ proteinByLiverSample.ubiquitous[go.genes.index,c("Accession", "Name")]
 ## how to put in wilcox.test?
 #test.stat <- new("classicScore", testStatistic = function() wilcox.test(), name = "Wilcox tests")
 #resultWT <- getSigGroups(GOdata, test.stat)
-
-
-
-
 
 
 
