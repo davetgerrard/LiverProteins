@@ -9,8 +9,10 @@
 
 if(!exists('output')) { output <- FALSE }  # would be over-ridden if already specified
 
+###################INFO: Re-run GO analyses grouping GO terms by functional clusters.
 
-#### Go through func clusters and pull in topGO results into a single table across BP,MF,CC
+
+###INFO:  Go through func clusters and pull in topGO results into a single table across BP,MF,CC
 
 
 elimCutOff <- 0.01
@@ -272,8 +274,8 @@ for(j in 1:5) {
 
 
 
-####### try condensing a GO results table based on functional clusters. 
-# Join GO terms into a group if the functional cluster contains a high proportion of the  proteins linked to that GO term
+#######INFO:  try condensing a GO results table based on functional clusters. 
+#INFO:  Join GO terms into a group if the functional cluster contains a high proportion of the  proteins linked to that GO term
 goContainProp <- 0.8  # same result with 0.7
 
 # protein func clusters: 
@@ -283,7 +285,7 @@ goContainProp <- 0.8  # same result with 0.7
 # go detected results table:
 # summaryDetectResultsList 
 
-# ?need to order the results (and start at the top?)
+#INFO:  ?need to order the results (and start at the top?)
 # perhaps filter by significance cut-off
 orderBy <- "elimFisher"
 # or could do overlap for all GO terms? Approx 5000
@@ -376,7 +378,7 @@ write.table(sigTable,file="sigDetectGoTableByCluster.tab",quote=F,row.names=F,se
 ############## FOR PC TABLES ONLY!  - BELOW IS USING DETECTED RESULTS ON PC TABLES!
 
 
-
+#INFO: Assign best functional cluster to GO terms, if applicable.
 ###PC table...
 
 #summmaryPcResultList[[i]]
@@ -391,7 +393,7 @@ for(i in 1:length(summmaryPcResultList)) {
 
 
 
-###############GRAPHING PC SCORES FROM TOP SIG TERMS.
+#############INFO: GRAPHING PC SCORES FROM TOP SIG TERMS.
 
 
 #cluster annotations. Cluster 4 (seedList[[4]]) are ribosomal proteins.
@@ -423,7 +425,7 @@ addGroupScoresToGroupTable <- function(groupTable,groupIds,groupName,scoreTable,
 
 
 #pc.i <- 1
-
+#INFO: Create violin plots
 library(lattice)
 
 bwPlotsAsPdf <- function(orderBy.PC="elimWilcox", pcTableSigThreshold=1.0e-04, numbGraphResults =15)  {
