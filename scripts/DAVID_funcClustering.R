@@ -165,32 +165,6 @@ while(startLength > endLength)  {
 
 
 
-stopifnot(FALSE)
-
-
-
-
-# GO terms for a cluster of proteins
-#go.terms <- unique(as.character(unlist(prot2go[seedList[[1]]])))
-
-#check if any of the functional groups look like the ribosomal proteins annotated as pancreas.
-#lapply(seedList,FUN = function(x) intersect(x,panc.genes))
-#go.terms <- unique(as.character(unlist(prot2go[seedList[[5]]])))
-
-
-#tabulate common GO terms within a func group.
-#table(as.character(unlist(prot2go[seedList[[5]]])))
-#sorted table (1 to 8)
-#sort(table(as.character(unlist(prot2go[seedList[[5]]]))),decreasing=T )[1:8]
-#all terms shared by half or more.
-
-#propTermShare <- 0.5
-#topTerms <- names(which(sort(table(as.character(unlist(prot2go[seedList[[5]]]))),decreasing=T ) >= ((length(seedList[[5]])*propTermShare) )))
-
-#xx[topTerms]
-
-
-#### could run KS/wilcox tests on protein clusters or combine p-values of 'functional categories'
 
 
 

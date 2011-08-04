@@ -385,6 +385,3 @@ proteinByLiverSample.ubi.pca <- merge(proteinByLiverSample.ubiquitous,ubi.pca.5.
 
 
 
-stopifnot(FALSE)
-
-

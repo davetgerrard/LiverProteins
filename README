@@ -10,7 +10,7 @@
 
 There is quite a bit of setting up of directories and R packages before running the scripts. It would be best to have the same version of R (or later?)
 
-A master script called cleanRun.R calls the other scripts. 
+A master script called LiverProtsAnalysisMaster.R lists the other scripts and can be used to call them. 
 
 
 ## RUNNING THE SCRIPTS.
@@ -58,14 +58,10 @@ library(org.Hs.eg.db)
 # may be a bunch of dependencies to do with BioConductor and topGO. e.g. GO.db, AnnotationDbi
 
 ### INPUT FILES
-source("C:/Users/dave/LiverProteins/loadPCA_noOutput.R")
-source("C:/Users/dave/LiverProteins/topGO_LiverProteins.R")
-source("C:/Users/dave/LiverProteins/DAVID_funcClustering.R")
-source("C:/Users/dave/LiverProteins/topGoByFuncCluster.R")
-
 baseProteinByLiverSample <- read.delim("C:/Users/dave/LiverProteins/data/Cliffs dataset.txt", header=T)
 prot2go <-  readMappings("C:/Users/dave/LiverProteins/data/go2prot.map")
 expDesignLiverProteins <- read.delim("C:/Users/dave/LiverProteins/data/CliffsExpDesign.txt", header=T)
 # this kappaMatrix can be recalculated as part of the script 
 kappaMatrix <- read.delim("C:/Users/dave/LiverProteins/data/ubiProtsKappaMatrixDetected.tab",sep="\t",header=T)
 
+### See LiverProtsAnalysisMaster.R for individual scripts.
