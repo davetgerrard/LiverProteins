@@ -14,6 +14,11 @@ makeNew <- FALSE	# set to TRUE if want to re-calc binary matrix (add 30 minutes 
 ########INFO: obtain pairwise annotation distances between proteins as kappa scores
 ###INFO: temp: get list of protein/GO annotaitons
 
+####NB TEST IF THIS SCRIPT RUNS AFTER loadPCAnoOutput.R
+library(topGO)
+prot2go <-  readMappings("C:/Users/dave/LiverProteins/data/go2prot.map")
+go2prot <- inverseList(prot2go)
+
 protTerms <- prot2go[c(proteinByLiverSample.ubiquitous$spAccession)]
 
 fullProtList <- proteinByLiverSample.ubiquitous$spAccession
