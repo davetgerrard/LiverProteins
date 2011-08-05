@@ -117,6 +117,7 @@ summaryDetectResults.ubiq$bestCluster  <- apply(summaryDetectResults.ubiq,1, FUN
 
 write.table(summaryDetectResults.ubiq[order(summaryDetectResults.ubiq$elimFisher),],file="detectGOWithClusterNumberElimFisher.ubiq.tab",sep="\t",quote=F,row.names=F)
 
+#INFO: Use clusterTable() to filter and cluster the table
 summaryDetectResults.ubiq.sigClustered <- clusterTable(summaryDetectResults.ubiq,orderBy=orderBy,detectTableSigThreshold=detectTableSigThreshold)     # function(table,orderBy,detectTableSigThreshold = 1.0e-05)  {
 
 write.table(summaryDetectResults.ubiq.sigClustered,file="sigDetectGoTableByCluster.ubiq.tab",quote=F,row.names=F,sep="\t")

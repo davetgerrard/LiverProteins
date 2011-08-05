@@ -11,18 +11,18 @@
 
 ########## FUNCTIONS
 
-#### list proteins for a GO term in a precalculated list of goData objects, accounting for ontology
-listProtsInGoFromList <- function(goTerm,ontology,goDataList)  {
+
+listProtsInGoFromList <- function(goTerm,ontology,goDataList)  {	#INFO: list proteins for a GO term in a precalculated list of goData objects, accounting for ontology
 	genesInTerm(goDataList[[ontology]],goTerm)[[1]]
 }
 
-# the topGOdata objects require a method for gene/protein selection. For enrichment analysis, we keep all proteins.
-topDiffGenes <- function(allScore) {
+
+topDiffGenes <- function(allScore) {	#INFO: the topGOdata objects require a method for gene/protein selection. For enrichment analysis, we keep all proteins.
 	return(allScore )
 }
 
-# this was a hack to get results out of the GOdata object and used for text output. May be out-of-date.
-resultSummaryAsText <-function (x)    # Function to collect data from GOdata results.
+
+resultSummaryAsText <-function (x)    #INFO: this was a hack to get results out of the GOdata object and used for text output. May be out-of-date.
 {
     text <-     paste("\nDescription:", description(x), "\n",
     	"'", algorithm(x), "' algorithm with the '", testName(x), 
@@ -45,7 +45,7 @@ resultSummaryAsText <-function (x)    # Function to collect data from GOdata res
 }
 
 
-runDetectGoTests <- function(GOdataBase )  {
+runDetectGoTests <- function(GOdataBase )  {	#INFO: runs a suite of GO detected/undetected tests over a topGOdata object and returns a result table
 
 	thisGOgraph <- GOdataBase@ontology
 	#GOdataBase <- goDataCollection.ubiq.binary[[thisGOgraph]]
@@ -93,18 +93,7 @@ runDetectGoTests <- function(GOdataBase )  {
 }
 
 
-runScoreGoTests <- function(GOdata,geneList,geneSelectionFun=topDiffGenes)  {
-		#geneList <- ubi.pca.5.scores[,compHead]
-		#names(geneList) <- ubi.pca.5.scores$spAccession
-		
-		# load the correct pre-computed GO data object (different trees based on ontology.
-		#GOdata <- switch(thisGOgraph,
-		#		"BP" = GOdata.BP,
-		#		"MF" = GOdata.MF,
-		#		"CC" = GOdata.CC
-		#		)
-
-		#GOdata <- updateGenes(GOdata,geneList,topDiffGenes)
+runScoreGoTests <- function(GOdata,geneList,geneSelectionFun=topDiffGenes)  { #INFO: runs a suite of GO score tests over a topGOdata object and returns a result table
 		thisGOgraph <- GOdata@ontology
 	
 		####INFO: define test statistics and apply over all GO terms 
@@ -169,7 +158,7 @@ runScoreGoTests <- function(GOdata,geneList,geneSelectionFun=topDiffGenes)  {
 }
 
 
-GOWilcoxTestGreater <- function (object,alternativeType="greater") 
+GOWilcoxTestGreater <- function (object,alternativeType="greater")	#INFO: Wilcox 1-sided (greater) test for use in topGO 
 {
     N <- numAllMembers(object)
     na <- numMembers(object)
@@ -181,7 +170,7 @@ GOWilcoxTestGreater <- function (object,alternativeType="greater")
 
 
 
-GOWilcoxTest2Sided <- function (object,alternativeType="two.sided") 
+GOWilcoxTest2Sided <- function (object,alternativeType="two.sided")	#INFO: Wilcox 2-sided test for use in topGO  
 {
     N <- numAllMembers(object)
     na <- numMembers(object)

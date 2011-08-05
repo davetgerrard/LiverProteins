@@ -49,7 +49,8 @@ topTerms <- 50
 #names(geneList.all) <- ubi.pca.5.scores$spAccession	# the names are important.
 
 allProtList <- names(prot2go)
-detectedProts.all <- baseProteinByLiverSample$spAccession
+##INFO: in this GO analysis use all proteins detected in at least one sample. N.B. there are many with zero data.
+detectedProts.all <- baseProteinByLiverSample$spAccession[baseProteinByLiverSample$baseDetectCountAll > 0]	
 geneList.all.binary <- factor(as.integer(allProtList %in% detectedProts.all))
 names(geneList.all.binary) <- allProtList
 
@@ -99,7 +100,7 @@ orderBy <- "elimFisher"
 
 
 
-# NB clusters are built only with ubiquitous proteins. Only going to use these proteins in clustering. 
+#INFO: NB clusters are built only with ubiquitous proteins. Only going to use these proteins in clustering. 
 validProts <- proteinByLiverSample.ubiquitous$spAccession
 
 # find all relevant clusters for each GO term. Not needed
@@ -107,7 +108,7 @@ validProts <- proteinByLiverSample.ubiquitous$spAccession
 #						goProteins.valid=intersect(listProtsInGoFromList(goTerm=x["goTerm"],ontology=x["ontology"],goDataCollection.all.binary),validProts),#
 #						seedList	,goContainProp ))
 
-# find the best cluster for a GO term.
+#INFO: find the best cluster for a GO term.
 summaryDetectResults.all$bestCluster  <- apply(summaryDetectResults.all,1, FUN= function(x) listBestOverlappingCluster(
 						goProteins.valid=intersect(listProtsInGoFromList(goTerm=x["goTerm"],ontology=x["ontology"],goDataCollection.all.binary),validProts),
 						seedList	,goContainProp ))
@@ -117,6 +118,7 @@ summaryDetectResults.all$bestCluster  <- apply(summaryDetectResults.all,1, FUN= 
 
 write.table(summaryDetectResults.all[order(summaryDetectResults.all$elimFisher),],file="detectGOWithClusterNumberElimFisher.all.tab",sep="\t",quote=F,row.names=F)
 
+#INFO: use clusterTable() to filter and cluster the table
 summaryDetectResults.all.sigClustered <- clusterTable(summaryDetectResults.all,orderBy=orderBy,detectTableSigThreshold=detectTableSigThreshold)     # function(table,orderBy,detectTableSigThreshold = 1.0e-05)  {
 
 write.table(summaryDetectResults.all.sigClustered,file="sigDetectGoTableByCluster.all.tab",quote=F,row.names=F,sep="\t")

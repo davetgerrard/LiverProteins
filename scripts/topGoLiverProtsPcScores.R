@@ -41,8 +41,8 @@ nodeSizeValue <- 10
 topNodesValue <- 20
 topTerms <- 50
 
-###INFO: set up a topGOdata object for each ontology based on the list of interesting proteins -> goDataCollection.ubiq
-## Used in performing GO tests and to retrieve appropriate protein lists from GO terms. 
+#INFO: set up a topGOdata object for each ontology based on the list of interesting proteins -> goDataCollection.ubiq
+#INFO: Used in performing GO tests and to retrieve appropriate protein lists from GO terms. 
 
 
 geneList.ubiq <- ubi.pca.5.scores$Comp.1			#take an aribitrary set of scores.
@@ -61,12 +61,12 @@ for(thisGOgraph in goGraphs )  {
 		)
 }
 
+####INFO: Perform tests and build set of result tables. One per PC.
+#INFO: following structure iterates through PCs and within each through GO ontologies (BP, MF, CC)
+#INFO: runs multiple tests for GO enrichment of PC scores and stores p-values per GO term
+#INFO: aim is to create one table for each PC with the results from the ontologies combined. 
 
-## following structure iterates through PCs and within each through GO ontologies (BP, MF, CC)
-## runs multiple tests for GO enrichment of PC scores and stores p-values per GO term
-## aim is to create one table for each PC with the results from the ontologies combined. 
-
-summaryScoreResults <- list()	# the PCs are treated separately. Their individual results are stored in elements of a list. 
+summaryScoreResults <- list()	#INFO: the PCs are treated separately. Their individual results are stored in elements of a list. 
 
 for( i in 1:5)  {
 	compHead <- paste("Comp.",i,sep="")		# this PC
@@ -76,16 +76,15 @@ for( i in 1:5)  {
 	summaryScoreResults[[i]] <- data.frame()	#initiate the data frame for all results from this PC
 
 	for(thisGOgraph in goGraphs )  {		# loop through 3 GO ontologies
-
-		
+		#INFO: The same goData object is re-used but must be updated with the relevant scores before use.
 		goDataCollection.ubiq.scored[[thisGOgraph]] <- updateGenes(goDataCollection.ubiq.scored[[thisGOgraph]],geneList,topDiffGenes)		
-		
+		#INFO: runScoreGoTests() performs the tests and returns an ouptut table
 		summaryScoreResults[[i]] <- rbind(summaryScoreResults[[i]],runScoreGoTests(goDataCollection.ubiq.scored[[thisGOgraph]],geneList,topDiffGenes))
 
 	}
 }
 
-## output the plain GO on PC results
+#INFO: output the plain GO on PC results
 for(i in 1:length(summaryScoreResults)) {
 	outFileName <- paste("GoSummaryByPc",i,"tab", sep=".")
 	write.table(summaryScoreResults[[i]],file=outFileName,sep="\t",quote=F,row.names=F) 
@@ -105,7 +104,7 @@ orderBy <- "elimWilcox"
 
 #summmaryPcResultList[[i]]
 
-
+#INFO: output the GO results with clusters marked on PC results
 for(i in 1:length(summaryScoreResults)) {
 	
 	summaryScoreResults[[i]]$bestCluster  <- apply(summaryScoreResults[[i]],1, FUN= function(x) listBestOverlappingCluster(
@@ -120,7 +119,7 @@ for(i in 1:length(summaryScoreResults)) {
 # use same detectTableSigThreshold for each PC table?
 
 
-
+#INFO: Use clusterTable() to ouput a filtered and clustered summary of the top terms in each PC table.
 summaryScoreResults.sigClustered <- list()
 for(i in 1:length(summaryScoreResults)) {
 	summaryScoreResults.sigClustered[[i]] <- clusterTable(summaryScoreResults[[i]],orderBy=orderBy,detectTableSigThreshold=detectTableSigThreshold)     # function(table,orderBy,detectTableSigThreshold = 1.0e-05)  {
