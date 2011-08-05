@@ -23,6 +23,9 @@ output <- FALSE
 source("C:/Users/dave/LiverProteins/scripts/loadPCA_noOutput.R")
 
 
+# plot venn diagrams of protein inclusion in sample groups.
+source("C:/Users/dave/LiverProteins/scripts/LiverProteinsVennDiagrams.R")
+
 # calculate functional clusters
 # this version of DAVID_funcClustering.R loads a pre-computed matrix
 source("C:/Users/dave/LiverProteins/scripts/DAVID_funcClustering.R")
