@@ -13,8 +13,7 @@
 
 ############GENERIC
 
-# give the index of the functional cluster which best represents this go term IF the cluster contains at least goContainProp of the proteins assigned to the go term.
-listBestOverlappingCluster <- function(goProteins.valid, seedList, goContainProp)  { 
+listBestOverlappingCluster <- function(goProteins.valid, seedList, goContainProp)  { 	#INFO: give the index of the functional cluster which best represents this go term IF the cluster contains at least goContainProp of the proteins assigned to the go term.
 	# which clusters contain greater than 'goContainProp' of the proteins annotated to this goTerm.
 	maxValue <-  max(unlist(lapply(seedList,FUN = function(x) length(intersect(x,goProteins.valid))/length(goProteins.valid))))
 	clusHitList <- which(unlist(lapply(seedList,FUN = function(x) length(intersect(x,goProteins.valid))/length(goProteins.valid))) == maxValue )
@@ -23,7 +22,7 @@ listBestOverlappingCluster <- function(goProteins.valid, seedList, goContainProp
 	} else {NA}
 }
 
-listAllOverlappingClusters <- function(goProteins.valid, seedList, goContainProp)  { 
+listAllOverlappingClusters <- function(goProteins.valid, seedList, goContainProp)  { 	# give all clusters containing at least goContainProp of the proteins assigned to the go term as a singe text string.
 	#length(goProteins.valid)
 	#lapply(seedList,FUN = function(x) length(intersect(x,goProteins.valid)))
 	# which clusters contain greater than 'goContainProp' of the proteins annotated to this goTerm.
@@ -33,8 +32,9 @@ listAllOverlappingClusters <- function(goProteins.valid, seedList, goContainProp
 	} else {NA}
 }
 
-### filter a table based on a treshold and reorders by keeping members of the same cluster together. 
-## the table is filtered, marked and re-ordered, grouping GO terms which represent the same functional cluster of proteins/genes
+
+#INFO: clusterTabel() filter a table based on a treshold and reorders by keeping members of the same cluster together. 
+#INFO: the table is filtered, marked and re-ordered, grouping GO terms which represent the same functional cluster of proteins/genes
 clusterTable <- function(goTable,orderBy,detectTableSigThreshold = 0.05)  {
 	# find a way to output the table (or a subsection) with (significant) cluster members grouped. 
 	# Only works with single (best) cluster per GO term. Limit to terms below significance threshold.

@@ -9,13 +9,66 @@
 
 ##################INFO:  DAVID Clustering: A Heuristic Multiple Linkage Fuzzy Clustering Procedure
 
+############INFO: FUNCTIONS
+
+davidKappaFromTable <- function(contTable)  {	#INFO: Calculate 'Kappa' from a 2x2 contingency table of co-occurence of terms in the annotation sets of two genes/proteins
+	obs <- (contTable[1,1] + contTable[2,2]) / sum(contTable)
+	exp <- (rowSums(contTable)[1] * colSums(contTable)[1] + rowSums(contTable)[2] * colSums(contTable)[2])/ sum(contTable)^2
+	davidKappa <- (obs - exp) / (1-exp)
+}
+
+getVectorToMerge <- function(seedList)  {	#INFO: returns an index of the first pair of clusters to merge or 1 if no suitable pairs.
+	for(i in 2:length(seedList)) {
+		minLength <- min(length(seedList[[1]]),length(seedList[[i]]))	# use this for single group limit
+		#minLength <- max(length(seedList[[1]]),length(seedList[[i]]))	# use this for double group limit		
+		if(length(intersect(seedList[[1]],seedList[[i]])) > floor(minLength * propToMerge ))  {
+			return(c(1,i))
+		}
+	}
+	return(1) 
+}
+
+mergeList <- function(seedList)  {		#INFO: one iteration to merge components of a term list.
+	newList <- list()
+	j <- 1
+	while(length(seedList) > 1)  {
+		mergeVector <- getVectorToMerge(seedList)
+		if(length(mergeVector) > 1)  {
+			newList[[j]] <- union(seedList[[mergeVector[1]]],seedList[[mergeVector[2]]])
+			seedList[[mergeVector[2]]] <- NULL  # must be in reverse order for index to work!
+			seedList[[mergeVector[1]]] <- NULL
+
+		} else  {		# no suitable group to merge, pass the vector unchanged.
+			newList[[j]] <- seedList[[mergeVector[1]]]
+			seedList[[mergeVector[1]]] <- NULL
+		}
+		j <- j+1
+	}
+	if(length(seedList) > 0)  {
+		newList[[j]] <- seedList[[1]]
+		seedList[[1]] <- NULL
+	}
+
+	return(newList)
+
+}
+
+
+############INFO: PRE-REQUISITES
+library(topGO)
+
+
+
+
+###########INFO: PROCESS
+
+
 makeNew <- FALSE	# set to TRUE if want to re-calc binary matrix (add 30 minutes to run time)
 
 ########INFO: obtain pairwise annotation distances between proteins as kappa scores
 ###INFO: temp: get list of protein/GO annotaitons
 
-####NB TEST IF THIS SCRIPT RUNS AFTER loadPCAnoOutput.R
-library(topGO)
+
 prot2go <-  readMappings("C:/Users/dave/LiverProteins/data/go2prot.map")
 go2prot <- inverseList(prot2go)
 
@@ -24,9 +77,8 @@ protTerms <- prot2go[c(proteinByLiverSample.ubiquitous$spAccession)]
 fullProtList <- proteinByLiverSample.ubiquitous$spAccession
 fullTermList <- unique(as.character(unlist(protTerms)))
 
-if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
-
-	###INFO:  require binary grid of genes vs terms 
+if(makeNew) {		#INFO: only create binaryGrid and kappaMatrix if none available
+	#INFO:  require binary grid of genes vs terms 
 
 	binaryGrid <- matrix(0,nrow=length(fullProtList),ncol=length(fullTermList),dimnames=list(fullProtList,fullTermList))
 
@@ -48,28 +100,20 @@ if(makeNew) {		# only create binaryGrid and kappaMatrix if none available
 	#contTable <- table(binaryGrid[1,],binaryGrid[2,])[c(2:1),c(2:1)]
 	#contTable <- table(binaryGrid[1,],binaryGrid[1,])[c(2:1),c(2:1)]
 
-	davidKappaFromTable <- function(contTable)  {
 
-		obs <- (contTable[1,1] + contTable[2,2]) / sum(contTable)
-		exp <- (rowSums(contTable)[1] * colSums(contTable)[1] + rowSums(contTable)[2] * colSums(contTable)[2])/ sum(contTable)^2
-		davidKappa <- (obs - exp) / (1-exp)
-	}
-	(as.numeric(davidKappaFromTable(contTable)))
+	#(as.numeric(davidKappaFromTable(contTable)))
 
 
 	#INFO:  THIS IS SLOW! About 30 mins. have saved the table
 	kappaMatrix <-matrix(0,nrow=nrow(binaryGrid),ncol=nrow(binaryGrid),dimnames=list( row.names(binaryGrid), row.names(binaryGrid)))
 	for(i in 1:nrow(kappaMatrix))  {
-		for(j in 1:nrow(kappaMatrix)) {
+		for(j in (i+1):nrow(kappaMatrix)) {
 			contTable <- table(binaryGrid[i,],binaryGrid[j,])[c(2:1),c(2:1)]
-			kappaMatrix[i,j] <- as.numeric(davidKappaFromTable(contTable))
+			kappaMatrix[j,i] <- kappaMatrix[i,j] <- as.numeric(davidKappaFromTable(contTable))
 		}
 	}
-
-
-	#write.table(kappaMatrix, file="ubiProtsKappaMatrix.tab",quote=F,sep="\t")
-} else {
-	#INFO:  use pre-computed kappaMatrix
+	write.table(kappaMatrix, file="ubiProtsKappaMatrix.tab",quote=F,sep="\t")
+} else {	#INFO:  Else use pre-computed kappaMatrix
 	kappaMatrix <- read.delim("C:/Users/dave/LiverProteins/data/ubiProtsKappaMatrixDetected.tab",sep="\t",header=T)
 
 }
@@ -110,45 +154,12 @@ for(i in 1:nrow(kappaMatrix)) {
 propToMerge <- 0.5
 
 
-## returns an index of the first pair of clusters to merge or 1 if no suitable pairs.
-getVectorToMerge <- function(seedList)  {
-	for(i in 2:length(seedList)) {
-		minLength <- min(length(seedList[[1]]),length(seedList[[i]]))	# use this for single group limit
-		#minLength <- max(length(seedList[[1]]),length(seedList[[i]]))	# use this for double group limit		
-		if(length(intersect(seedList[[1]],seedList[[i]])) > floor(minLength * propToMerge ))  {
-			return(c(1,i))
-		}
-	}
-	return(1) 
-}
+
 
 #seedList <- newList
 #seedList <- testList
 
-mergeList <- function(seedList)  {		# one iteration to merge components of a term list.
-	newList <- list()
-	j <- 1
-	while(length(seedList) > 1)  {
-		mergeVector <- getVectorToMerge(seedList)
-		if(length(mergeVector) > 1)  {
-			newList[[j]] <- union(seedList[[mergeVector[1]]],seedList[[mergeVector[2]]])
-			seedList[[mergeVector[2]]] <- NULL  # must be in reverse order for index to work!
-			seedList[[mergeVector[1]]] <- NULL
 
-		} else  {		# no suitable group to merge, pass the vector unchanged.
-			newList[[j]] <- seedList[[mergeVector[1]]]
-			seedList[[mergeVector[1]]] <- NULL
-		}
-		j <- j+1
-	}
-	if(length(seedList) > 0)  {
-		newList[[j]] <- seedList[[1]]
-		seedList[[1]] <- NULL
-	}
-
-	return(newList)
-
-}
 
 startLength <- 1
 endLength <- 0
